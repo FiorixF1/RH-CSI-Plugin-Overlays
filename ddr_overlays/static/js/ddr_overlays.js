@@ -593,22 +593,14 @@ function build_elimination_brackets(race_bracket_type, race_class_id, ddr_pilot_
                     html += '</div>';
                 }
             } else {
-                let flag = getPilotFlag(slot.pilot_id, ddr_pilot_data);
-
-                let pilotImg = '/static/user/avatars/' + pilot.callsign.replace(/ /g,"_").toLowerCase() + '.png';       
-                if (!imageExists(pilotImg)) {
-                    pilotImg = '/ddr_overlays/static/imgs/no_avatar.png';
-                }
-
-                let teamImg = '/ddr_overlays/static/imgs/teams/' + pilot.team?.replace(/ /g,"_").toLowerCase() + '.jpg';       
-                if (!imageExists(teamImg)) {
-                    teamImg = '/ddr_overlays/static/imgs/no_team.png';
-                } // add team to HTML
+                let flagImg = getFlagURL(slot.pilot_id, ddr_pilot_data);
+                let pilotImg = getPilotImgURL(pilot);
+                let teamImg = getTeamImgURL(pilot);
 
                 html += '<div class="bracket_race_pilot">';
 
                 html += '<div class="avatar"><img src="' + pilotImg + '"></div>';
-                html += '<div class="flag"><img src="/ddr_overlays/static/imgs/flags/' + flag + '.jpg" alt="USA"></div>';
+                html += '<div class="flag"><img src="' + flagImg + '" alt="USA"></div>';
                 html += '<div class="pilot_name">' + pilot.callsign + '</div>';
 
                 html += '</div>';
