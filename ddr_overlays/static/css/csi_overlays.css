@@ -1,0 +1,149 @@
+
+@font-face {
+    font-family: 'BebasNeue'; /* Nome del font che userai in CSS */
+    src: url('/ddr_overlays/static/fonts/csi/BebasNeue-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
+/* NEXT UP - LAST HEAT */ 
+
+#ddr_nextup {
+    background: black;
+    color: white;
+}
+
+.container-figurina {
+    display: flex;
+    place-content: center;
+    max-width: 255px;
+    height: 330px;
+    justify-self: center;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, black 100%);
+                border: 5px solid transparent; /* Transparent border to be replaced */
+                border-image: linear-gradient(to right, #b8b8b8, #e0e0e0, #b8b8b8);
+                border-image-slice: 1;
+}
+
+.bottom-container {
+    background-image: url(/ddr_overlays/static/imgs/pilot-container.png?version=x);
+    background-position: center;
+    background-size: contain;
+    display: flex;
+    min-height: 77px;
+    margin-top:-21px;
+    position: relative;
+    z-index: 99;
+}
+
+.nextup_flag {
+    min-width: 68px;
+}
+
+.nextup_flag img {
+    width: 69px;
+    filter: drop-shadow(0px 0px 4px red) 
+            drop-shadow(0px 0px 5px black);
+}
+
+.nextup_pilot_title {
+    text-align: center;
+    font-size: 29px;
+    font-family: BebasNeue;
+    width: 200px;
+    align-content: center;
+    margin-top: -10px;
+}
+
+.team-logo {
+    min-width: 48px;
+}
+
+.team-logo img {
+    width: 49px;
+    filter: drop-shadow(0px 0px 4px red) 
+            drop-shadow(0px 0px 5px black);
+}
+
+img#raceImage {
+    max-width: 300px;
+    justify-self: center;
+}
+
+/* QUALIFYING RANKING */
+
+thead {
+    background: #ca0f0f;
+}
+
+tr[id^="pilot_id_"] {
+    background-image: url(/ddr_overlays/static/imgs/bg-qual.png?version=x);
+    color: white;
+    background-position: center;
+    background-size: cover;
+}
+
+thead th {
+    height: 1.2em;
+    vertical-align: middle!important;
+    color: white;
+}
+
+th.fast {
+    padding-right: 60px;
+}
+
+td.fast {
+    padding-right: 40px;
+    color: #00ff00;
+    font-weight: 600;
+}
+
+td.pos {
+    padding-left: 40px;
+}
+
+td.pilot {
+    font-family: 'BebasNeue';
+}
+
+td.team {
+    padding-right: 200px;
+    color: #000000;
+    font-weight: 600;
+}
+
+#ddr_leaderboard32 .flag {
+    float: unset!important;
+    place-self: center;
+    margin-top: 30px;
+}
+
+#ddr_leaderboard32 .avatar {
+    width: 93px;
+    height: 87px;
+}
+
+#ddr_leaderboard32 .avatar img {
+    width: 120%;
+    height: 116%;
+    object-fit: cover;
+    object-position: top;
+    margin-top: -10px;
+}
+
+#ddr_leaderboard32 td.pilot {
+    padding-top: 16px;
+    width: 260px;
+}
+
+#ddr_leaderboard32 .flag {
+    margin-left: 100px;
+    /* float: unset!important; */
+    /* place-self: center; */
+    margin-top: 30px;
+    /* justify-self: center; */
+    margin-right: -100px;
+}
