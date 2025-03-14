@@ -33,7 +33,8 @@
     <link rel="stylesheet" href="/static/magnific-1.1.0/magnific-popup.css"></link>
     <link rel="stylesheet" href="/static/stream.css"></link>
     <link rel="stylesheet" href="/ddr_overlays/static/fonts/teko/stylesheet.css"></link>
-    <link rel="stylesheet" href="/ddr_overlays/static/css/ddr_overlays.css"></link>
+    <link rel="stylesheet" href="/ddr_overlays/static/css/ddr_overlays.css?ver=1.0"></link>
+    <link rel="stylesheet" href="/ddr_overlays/static/css/csi_overlays.css?ver=1.0"></link>
 
     <!-- Child template head content -->
 
@@ -86,7 +87,7 @@
             rotorhazard.event.pilots = msg.pilots;
             rotorhazard.options.pilotSort = msg.pilotSort;
             ddr_pilot_data = msg.pilots;    
-        }); 
+        });
 
         socket.on('heartbeat', default_handler['heartbeat']);
 
