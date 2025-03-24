@@ -74,6 +74,14 @@ def initialize(rhapi):
     def ddr_overlays_streamBar():
         return templating.render_template('stream/bar.html', serverInfo=None, getOption=rhapi.db.option, __=rhapi.__, DEBUG=False)
 
+    @bp.route('/ddr_overlays/stream/bar-vertical')
+    def ddr_overlays_streamBarVertical():
+        return templating.render_template('stream/leaderboard-bar-vertical.html', serverInfo=None, getOption=rhapi.db.option, __=rhapi.__, DEBUG=False)
+
+    @bp.route('/ddr_overlays/stream/bar-horizontal')
+    def ddr_overlays_streamBarHorizontal():
+        return templating.render_template('stream/leaderboard-bar.html', serverInfo=None, getOption=rhapi.db.option, __=rhapi.__, DEBUG=False)
+
     ### overlays based on bracket type and class ###
     @bp.route('/ddr_overlays/stream/leaderboard/<string:bracket_type>/<int:class_id>')
     def ddr_overlays_streamLeaderboard(bracket_type, class_id):

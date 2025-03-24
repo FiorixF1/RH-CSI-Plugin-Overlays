@@ -35,10 +35,20 @@
     <link rel="stylesheet" href="/ddr_overlays/static/fonts/teko/stylesheet.css"></link>
     <link rel="stylesheet" href="/ddr_overlays/static/fonts/inconsolata/stylesheet.css"></link>
     <link rel="stylesheet" href="/ddr_overlays/static/css/ddr_overlays.css"></link>
+    <link rel="stylesheet" href="/ddr_overlays/static/css/csi_overlays.css"></link>
 
     <!-- Child template head content -->
 
 </head>
+
+<style>
+@font-face {
+    font-family: 'BebasNeue'; /* Nome del font che userai in CSS */
+    src: url('/ddr_overlays/static/fonts/csi/BebasNeue-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+</style>
 
 <body>
 
@@ -203,7 +213,7 @@
 
                         if (pilot.country) {
                             country_upper = pilot.country;
-                            country_flag = '<img class="country_flag" src="/ddr_overlays/static/imgs/flags/' + country_upper + '.jpg">';
+                            country_flag = '<img class="country_flag" src="/ddr_overlays/static/imgs/flags/' + country_upper + '.png">';
                             $('#node_flag').html(country_flag);
                         }
 
@@ -258,7 +268,7 @@
                         // $('#laps').html(pilot_data.laps);
                         // $('#fastest_lap').html(pilot_data.fastest_lap);
 
-                        var pilotImg = '/static/user/avatars/' + pilot_data.callsign.replace(/ /g,"_").toLowerCase() + '.jpg';
+                        var pilotImg = '/static/user/avatars/' + pilot_data.callsign.replace(/ /g,"_").toLowerCase() + '.png';
 
                         if (!imageExists(pilotImg)) {
                             pilotImg = '/ddr_overlays/static/imgs/no_avatar.png';
@@ -298,8 +308,10 @@
 
     <div id="ddr_node">
 
-        <div id="node_avatar">
+        <div id="node_avatars">
+            <div id="node-avatar-container">
             <img id="node_avatar_img" src="/ddr_overlays/static/imgs/no_avatar.png">
+            </div>
         </div>
 
         <div id="node_position">

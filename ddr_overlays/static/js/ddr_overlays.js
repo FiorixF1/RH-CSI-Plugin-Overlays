@@ -178,7 +178,7 @@ function build_nextup(leaderboard, display_type, meta, ddr_pilot_data, show_posi
         let pilotImg = getPilotImgURL(leaderboard[i]);
         let teamImg = getTeamImgURL(leaderboard[i]);
 
-        let html = '<div class="nextup_pilot"><div class="container-figurina"> <img src="' + pilotImg + '" alt="Avatar"></div>';
+        let html = '<div class="nextup_pilot">';
         if (show_position) {
             let position_strings = ["1st", "2nd", "3rd", "4th"];
             html += '<div class="nextup_pilot_position">'+ position_strings[i] +'</div>';
@@ -187,8 +187,9 @@ function build_nextup(leaderboard, display_type, meta, ddr_pilot_data, show_posi
             // var fastest_lap = leaderboard[i].fastest_lap;
             // var consecutives = leaderboard[i].consecutives;
         }
-        html += '<div class="bottom-container"><div class="nextup_flag"><img src="' + flagImg + '"></div><div class="nextup_pilot_title">' + pilot_name + '</div><div class="team-logo"><img src="' + teamImg + '"></div></div>';
-        html += '<div class="container-team">' + leaderboard[i].team_name + '</div></div>';
+        html += '<div class="container-figurina"> <img src="' + pilotImg + '" alt="Avatar"></div>';
+        html += '<div class="bottom-container"><div class="nextup_flag"><img src="' + flagImg + '"></div><div class="center-pilot-card"><div class="nextup_pilot_title">' + pilot_name + '</div><div class="container-team">' + leaderboard[i].team_name + '</div></div><div class="team-logo"><img src="' + teamImg + '"></div></div>';
+        html += '</div>';
 
         $('#nextup_pilot_box').append(html);
     }
@@ -420,7 +421,7 @@ function getPilotImgURL(pilot) {
 }
 
 function getTeamImgURL(pilot) {
-    let teamImg = '/ddr_overlays/static/imgs/teams/' + pilot.team_name?.replace(/ /g,"_").toLowerCase() + '.jpg';       
+    let teamImg = '/ddr_overlays/static/imgs/teams/' + pilot.team_name?.replace(/ /g,"_").toLowerCase() + '.png';       
     if (!imageExists(teamImg)) {
         teamImg = '/ddr_overlays/static/imgs/no_team.png';
     }
