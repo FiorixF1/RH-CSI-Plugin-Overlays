@@ -64,23 +64,19 @@ def initialize(rhapi):
     def ddr_overlays_homePage():
         return templating.render_template('ddr_overlay_index.html', serverInfo=None, getOption=rhapi.db.option, __=rhapi.__)
 
-    ### bar ###
+    ### live results ###
     @bp.route('/ddr_overlays/stream/results')
     def ddr_overlays_streamResults():
         return templating.render_template('stream/results.html', serverInfo=None, getOption=rhapi.db.option, __=rhapi.__, DEBUG=False)
 
     ### bar ###
-    @bp.route('/ddr_overlays/stream/bar')
-    def ddr_overlays_streamBar():
-        return templating.render_template('stream/bar.html', serverInfo=None, getOption=rhapi.db.option, __=rhapi.__, DEBUG=False)
-
-    @bp.route('/ddr_overlays/stream/bar-vertical')
+    @bp.route('/ddr_overlays/stream/bar_vertical')
     def ddr_overlays_streamBarVertical():
-        return templating.render_template('stream/leaderboard-bar-vertical.html', serverInfo=None, getOption=rhapi.db.option, __=rhapi.__, DEBUG=False)
+        return templating.render_template('stream/status_bar_vertical.html', serverInfo=None, getOption=rhapi.db.option, __=rhapi.__, DEBUG=False)
 
-    @bp.route('/ddr_overlays/stream/bar-horizontal')
+    @bp.route('/ddr_overlays/stream/bar_horizontal')
     def ddr_overlays_streamBarHorizontal():
-        return templating.render_template('stream/leaderboard-bar.html', serverInfo=None, getOption=rhapi.db.option, __=rhapi.__, DEBUG=False)
+        return templating.render_template('stream/status_bar_horizontal.html', serverInfo=None, getOption=rhapi.db.option, __=rhapi.__, DEBUG=False)
 
     ### overlays based on bracket type and class ###
     @bp.route('/ddr_overlays/stream/leaderboard/<string:bracket_type>/<int:class_id>')

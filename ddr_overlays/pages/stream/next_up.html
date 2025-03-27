@@ -175,7 +175,7 @@
 
         let heat_index = heat_number-1;
         let bracket_format_info = bracket_formats[race_bracket_type];
-        let is_preliminary_bracket = (bracket_format_info[heat_index].type == "winner") && heat_index < get_number_of_pilots_from_format(race_bracket_type)/4;
+        let is_preliminary_bracket = (bracket_format_info[heat_index].type == "preliminary");
         let is_winner_bracket = (bracket_format_info[heat_index].type == "winner");
         let is_final_heat = (heat_number >= bracket_format_info[bracket_format_info.length-1].number);
 
@@ -222,13 +222,13 @@ Coming            Next Up:
 
                 <div class="nextup_pilot_avatar">
                     <div class="nextup_pilot_avatar_mask">
-                        <img src="/ddr/static/imgs/no-avatar.webp" alt="Avatar">
+                        <img src="/ddr_overlays/static/imgs/no_avatar.png" alt="Avatar">
                     </div>
                 </div>
 
                 <div class="nextup_pilot_flag">
                     <div class="nextup_pilot_flag_mask">
-                        <img src="/ddr/static/imgs/flags/nl.jpg">
+                        <img src="/ddr_overlays/static/imgs/flags/it.png">
                     </div>
                 </div>
 

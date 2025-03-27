@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="RotorHazard">
     <meta name="google" content="notranslate">
-    <title>Live Leaderboard</title>
+    <title>Stream Top Bar - {{ getOption("timerName") }}</title>
 
     <!-- Icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="/static/image/apple-touch-icon.png">
@@ -74,9 +74,6 @@ body {
 
     rotorhazard.show_messages = false;
 
-    // the class of the current heat
-    var streamclass;
-
     function race_kickoff(msg) {
         rotorhazard.timer.stopAll();
 
@@ -94,17 +91,6 @@ body {
         // get pi time
         rotorhazard.pi_time_request = window.performance.now();
         socket.emit('get_pi_time');
-
-        socket.emit('load_data', {'load_types': [
-            'current_heat',
-        ]});
-
-        socket.on('current_heat', function (msg) {
-            console.log('Class of the current heat is:', msg.heat_class);
-            if (msg.heat_class) {
-                streamclass = msg.heat_class;
-            }
-        });
 
         socket.on('pi_time', default_handler['pi_time']);
 
@@ -132,18 +118,16 @@ body {
 
             var leaderboard_type = race.leaderboard.meta.primary_leaderboard;
             var leaderboard = race.leaderboard[leaderboard_type];
-            $('#leaderboard').empty();
-            $('#leaderboard').append(build_leaderboard(leaderboard, 'current', race.leaderboard.meta));
 
             $(".lbh-pilot-container-center").empty();
             for (var i in leaderboard) {
-                var pilot_data = leaderboard[i];
-                var pilot_id = pilot_data.pilot_id;
-                var pilot_callsign = pilot_data.callsign;
-                var pilot_position = +i+1; // pilot_data.position is null until a pilot has completed at least one lap
-                var pilot_image_url = getPilotImgURL(pilot_data);
+                var pilot = leaderboard[i];
+                var pilot_id = pilot.pilot_id;
+                var pilot_callsign = pilot.callsign;
+                var pilot_position = +i+1; // pilot.position is null until a pilot has completed at least one lap
+                var pilot_image_url = getPilotImgURL(pilot);
 
-                var pilot_last_lap = pilot_data.last_lap || "0:00.000";
+                var pilot_last_lap = pilot.last_lap || "0:00.000";
                 var lap_minutes = pilot_last_lap.slice(0, 1);
                 var lap_seconds = pilot_last_lap.slice(2, 4);
                 var lap_milliseconds = pilot_last_lap.slice(5);
@@ -223,7 +207,7 @@ body {
           <div class="lbh-driver">
             <div class="lbh-driver-top">
               <div class="lbh-position">2</div>
-              <div class="lbh-image" style="background-image: url('https://via.placeholder.com/36')"></div>
+              <div class="lbh-image" style="hamilton.png')"></div>
               <div class="lbh-name">Hamilton</div>
             </div>
           </div>
@@ -238,7 +222,7 @@ body {
           <div class="lbh-driver">
             <div class="lbh-driver-top">
               <div class="lbh-position">3</div>
-              <div class="lbh-image" style="background-image: url('https://via.placeholder.com/36')"></div>
+              <div class="lbh-image" style="leclerc.png')"></div>
               <div class="lbh-name">Leclerc</div>
             </div>
           </div>
@@ -253,7 +237,7 @@ body {
           <div class="lbh-driver">
             <div class="lbh-driver-top">
               <div class="lbh-position">4</div>
-              <div class="lbh-image" style="background-image: url('https://via.placeholder.com/36')"></div>
+              <div class="lbh-image" style="norris.png')"></div>
               <div class="lbh-name">Norris</div>
             </div>
           </div>

@@ -172,9 +172,8 @@ function build_nextup(leaderboard, display_type, meta, ddr_pilot_data, show_posi
     }
 
     for (var i in leaderboard) {
-
         let pilot_name = leaderboard[i].callsign;       
-        let flagImg = getFlagURL(leaderboard[i].pilot_id, ddr_pilot_data);
+        let flagImg = getFlagURL(leaderboard[i]);
         let pilotImg = getPilotImgURL(leaderboard[i]);
         let teamImg = getTeamImgURL(leaderboard[i]);
 
@@ -188,7 +187,7 @@ function build_nextup(leaderboard, display_type, meta, ddr_pilot_data, show_posi
             // var consecutives = leaderboard[i].consecutives;
         }
         html += '<div class="container-figurina"> <img src="' + pilotImg + '" alt="Avatar"></div>';
-        html += '<div class="bottom-container"><div class="nextup_flag"><img src="' + flagImg + '"></div><div class="center-pilot-card"><div class="nextup_pilot_title">' + pilot_name + '</div><div class="container-team">' + leaderboard[i].team_name + '</div></div><div class="team-logo"><img src="' + teamImg + '"></div></div>';
+        html += '<div class="bottom-container"><div class="nextup_flag"><img src="' + flagImg + '"></div><div class="center-pilot-card"><div class="nextup_pilot_title">' + pilot_name + '</div><div class="container-team">' + (leaderboard[i].team_name || '-') + '</div></div><div class="team-logo"><img src="' + teamImg + '"></div></div>';
         html += '</div>';
 
         $('#nextup_pilot_box').append(html);
@@ -272,21 +271,21 @@ function build_leaderboard(leaderboard, display_type, meta, number_of_pilots=999
         if (i < number_of_pilots) {
             var row = $('<tr id="pilot_id_' + leaderboard[i].pilot_id + '">');
 
-            row.append('<td class="pos">'+ (leaderboard[i].position != null ? leaderboard[i].position : '-') +'</td>');
+            row.append('<td class="pos">'+ (leaderboard[i].position || '-') +'</td>');
 
             var pilotImg = getPilotImgURL(leaderboard[i]);
             row.append('<td class="avatar"><img src=" ' + pilotImg + ' "></td>');
 
             let teamImg = getTeamImgURL(leaderboard[i]);
 
-            let flagImg = getFlagURL(leaderboard[i].pilot_id, ddr_pilot_data);
+            let flagImg = getFlagURL(leaderboard[i]);
             row.append('<td class="flag" id="pilot_id_flag_' + leaderboard[i].pilot_id + '"><img class="country_flag" src="' + flagImg + '"></td>');
 
             var pilot_name_flag = leaderboard[i].callsign;
 
             row.append('<td class="pilot">' + pilot_name_flag + '</td>');
             //if (meta.team_racing_mode) {
-                row.append('<td class="team">' + leaderboard[i].team_name + '</td>');
+                row.append('<td class="team">' + (leaderboard[i].team_name || '-') + '</td>');
             //}
             if (display_starts == true) {
                 row.append('<td class="starts">' + leaderboard[i].starts + '</td>');
@@ -315,9 +314,9 @@ function build_leaderboard(leaderboard, display_type, meta, number_of_pilots=999
                 row.append('<td class="avg">'+ lap +'</td>');
             }
             if (display_type == 'by_fastest_lap' ||
-            display_type == 'heat' ||
-            display_type == 'round' ||
-            display_type == 'current') {
+                display_type == 'heat' ||
+                display_type == 'round' ||
+                display_type == 'current') {
                 var lap = leaderboard[i].fastest_lap;
                 if (!lap || lap == '0:00.000')
                     lap = '&#8212;';
@@ -343,9 +342,9 @@ function build_leaderboard(leaderboard, display_type, meta, number_of_pilots=999
                 }
             }
             if (display_type == 'by_consecutives' ||
-            display_type == 'heat' ||
-            display_type == 'round' ||
-            display_type == 'current') {
+                display_type == 'heat' ||
+                display_type == 'round' ||
+                display_type == 'current') {
                 var data = leaderboard[i];
                 if (!data.consecutives || data.consecutives == '0:00.000') {
                     lap = '&#8212;';
@@ -387,29 +386,132 @@ function build_leaderboard(leaderboard, display_type, meta, number_of_pilots=999
     return twrap;
 }
 
+function build_results(leaderboard, display_type='by_race_time', meta={}, number_of_pilots=999, ddr_pilot_data=[], display_starts=false) {
+    meta.team_racing_mode ??= false;
+    meta.start_behavior ??= 0;
+    meta.consecutives_count ??= 0;
+    meta.primary_leaderboard ??= null;
+
+    const show_points = display_type == 'round';
+    const total_label = meta.start_behavior == 2 ? __('Laps Total') : __('Total');
+
+    const twrap = $('<div class="responsive-wrap">');
+    const table = $('<table class="leaderboard">');
+    const header = $('<thead>');
+    const header_row = $('<tr>');
+
+    const th = (cls, text) => `<th class="${cls}">${text}</th>`;
+    header_row.append(th('pos', 'Pos'));
+    header_row.append(th('avatar', '<span class="screen-reader-text">Avatar</span>'));
+    header_row.append(th('flags', '<span class="screen-reader-text">Flag</span>'));
+    header_row.append(th('pilot', __('Pilot')));
+    header_row.append(th('team', __('Team')));
+
+    if (display_starts) header_row.append(th('starts', __('Starts')));
+
+    if (['by_race_time', 'heat', 'round', 'current'].includes(display_type)) {
+        header_row.append(th('laps', __('Laps')));
+        header_row.append(th('total', total_label));
+        header_row.append(th('avg', __('Avg.')));
+    }
+
+    if (['by_fastest_lap', 'heat', 'round', 'current'].includes(display_type)) {
+        header_row.append(th('fast', __('Fastest')));
+        if (display_type === 'by_fastest_lap') header_row.append(th('source', __('Source')));
+    }
+
+    if (['by_consecutives', 'heat', 'round', 'current'].includes(display_type)) {
+        header_row.append(th('consecutive', __('Consecutive')));
+        if (display_type === 'by_consecutives') header_row.append(th('source', __('Source')));
+    }
+
+    if (show_points && 'primary_points' in meta) {
+        header_row.append(th('points', __('Points')));
+    }
+
+    header.append(header_row);
+    table.append(header);
+
+    const body = $('<tbody>');
+
+    leaderboard.slice(0, number_of_pilots).forEach(pilot => {
+        const row = $(`<tr id="pilot_id_${pilot.pilot_id}">`);
+
+        const blankIfZero = val => (!val || val === '0:00.000') ? '&#8212;' : val;
+
+        row.append(`<td class="pos">${pilot.position || '-'}</td>`);
+
+        const avatarUrl = getPilotImgURL(pilot);
+        row.append(`<td class="avatar"><div class="avatar-img" style="background-image: url('${avatarUrl}')"></div></td>`);
+
+        const flagUrl = getFlagURL(pilot);
+        row.append(`<td class="flag"><img class="country_flag" src="${flagUrl}"></td>`);
+
+        row.append(`<td class="pilot">${pilot.callsign}</td>`);
+        row.append(`<td class="team">${pilot.team_name || '-'}</td>`);
+
+        if (display_starts) row.append(`<td class="starts">${pilot.starts}</td>`);
+
+        if (['by_race_time', 'heat', 'round', 'current'].includes(display_type)) {
+            row.append(`<td class="laps">${blankIfZero(pilot.laps)}</td>`);
+            const total = meta.start_behavior == 2 ? pilot.total_time_laps : pilot.total_time;
+            row.append(`<td class="total">${blankIfZero(total)}</td>`);
+            row.append(`<td class="avg">${blankIfZero(pilot.average_lap)}</td>`);
+        }
+
+        if (['by_fastest_lap', 'heat', 'round', 'current'].includes(display_type)) {
+            const fastest = blankIfZero(pilot.fastest_lap);
+            const el = $(`<td class="fast">${fastest}</td>`);
+            if (pilot.fastest_lap_source) {
+                const src = pilot.fastest_lap_source;
+                const source_text = `${src.displayname} / ${__('Round')} ${src.round}`;
+                if (display_type === 'heat') el.attr('title', source_text).data('source', source_text);
+                if (display_type === 'by_fastest_lap') row.append(`<td class="source">${source_text}</td>`);
+            } else {
+                if (display_type === 'by_fastest_lap') row.append(`<td class="source">None</td>`);
+            }
+            row.append(el);
+        }
+
+        if (['by_consecutives', 'heat', 'round', 'current'].includes(display_type)) {
+            let lap = '&#8212;';
+            if (pilot.consecutives && pilot.consecutives != '0:00.000') {
+                lap = `${pilot.consecutives_base}/${pilot.consecutives}`;
+            }
+            const el = $(`<td class="consecutive">${lap}</td>`);
+            if (pilot.consecutives_source) {
+                const src = pilot.consecutives_source;
+                const source_text = `${src.displayname} / ${__('Round')} ${src.round}`;
+                if (display_type === 'heat') el.attr('title', source_text).data('source', source_text);
+                if (display_type === 'by_consecutives') row.append(`<td class="source">${source_text}</td>`);
+            } else {
+                if (display_type === 'by_consecutives') row.append(`<td class="source">None</td>`);
+            }
+            row.append(el);
+        }
+
+        if (show_points && 'primary_points' in meta) {
+            row.append(`<td class="points">${pilot.points}</td>`);
+        }
+
+        body.append(row);
+    });
+
+    table.append(body);
+    twrap.append(table);
+
+    return twrap;
+}
+
 
 
 /* Pilot data retrieval */
-function getFlagURL(pilot_id, ddr_pilot_data) {
-    return '/ddr_overlays/static/imgs/flags/' + getPilotFlag(pilot_id, ddr_pilot_data) + '.png';
-}
-
-function getPilotFlag(pilot_id, ddr_pilot_data) {
-    count = Object.keys(ddr_pilot_data).length;
-    for (var i = 0; i < count; i++) {
-        let pilot = ddr_pilot_data[i];
-        if (pilot.pilot_id == pilot_id) {
-            pilot = ddr_pilot_data[i];
-            if (pilot.country) {
-                country_upper = pilot.country;
-                //country_flag = '<img class="country_flag" src="/fpvscores/static/assets/imgs/flags/'+country_upper+'.jpg">';
-                //$('#pilot_flag').html(country_flag);
-                return country_upper;
-            }
-            break;
-        }
+function getFlagURL(pilot) {
+    let country_lower = 'it';
+    if (pilot.country) {
+        country_lower = pilot.country.toLowerCase();
     }
-    return 'it';
+    return '/ddr_overlays/static/imgs/flags/' + country_lower + '.png';
 }
 
 function getPilotImgURL(pilot) {
@@ -433,22 +535,6 @@ function imageExists(image_url) {
     http.open('HEAD', image_url, false);
     http.send();
     return http.status != 404;
-}
-
-// never called?
-function getPilotTeam(pilot_id, ddr_pilot_data) {
-    count = Object.keys(ddr_pilot_data).length;
-    for (var i = 0; i < count; i++) {
-        let pilot = ddr_pilot_data[i];
-        if (pilot.pilot_id == pilot_id) {
-            pilot = ddr_pilot_data[i];
-            if (pilot.team) {
-                return pilot.team;
-            }
-            break;
-        }
-    }
-    return '';
 }
 
 
@@ -503,55 +589,55 @@ class BracketHeat {
 
 const bracket_formats = {
     "multigp16": [
-                   new BracketHeat(1,  "winner", 0, 6),
-                   new BracketHeat(2,  "winner", 0, 6),
-                   new BracketHeat(3,  "winner", 0, 8),
-                   new BracketHeat(4,  "winner", 0, 8),
-                   new BracketHeat(5,  "loser",  0, 9),
-                   new BracketHeat(6,  "winner", 1, 11),
-                   new BracketHeat(7,  "loser",  0, 10),
-                   new BracketHeat(8,  "winner", 1, 11),
-                   new BracketHeat(9,  "loser",  1, 12),
-                   new BracketHeat(10, "loser",  1, 12),
-                   new BracketHeat(11, "winner", 2, 14),
-                   new BracketHeat(12, "loser",  2, 13),
-                   new BracketHeat(13, "loser",  3, 14),
-                   new BracketHeat(14, "winner", 3),
+                   new BracketHeat(1,  "preliminary", 0, 6),
+                   new BracketHeat(2,  "preliminary", 0, 6),
+                   new BracketHeat(3,  "preliminary", 0, 8),
+                   new BracketHeat(4,  "preliminary", 0, 8),
+                   new BracketHeat(5,  "loser",       0, 9),
+                   new BracketHeat(6,  "winner",      1, 11),
+                   new BracketHeat(7,  "loser",       0, 10),
+                   new BracketHeat(8,  "winner",      1, 11),
+                   new BracketHeat(9,  "loser",       1, 12),
+                   new BracketHeat(10, "loser",       1, 12),
+                   new BracketHeat(11, "winner",      2, 14),
+                   new BracketHeat(12, "loser",       2, 13),
+                   new BracketHeat(13, "loser",       3, 14),
+                   new BracketHeat(14, "winner",      3),
                  ],
     //"fai16":     [],
     //"fai16de":   [],
     //"fai32":     [],
     "fai32de":   [
-                   new BracketHeat(1,  "winner", 0),
-                   new BracketHeat(2,  "winner", 0),
-                   new BracketHeat(3,  "winner", 0),
-                   new BracketHeat(4,  "winner", 0),
-                   new BracketHeat(5,  "winner", 1),
-                   new BracketHeat(6,  "winner", 1),
-                   new BracketHeat(7,  "winner", 1),
-                   new BracketHeat(8,  "winner", 1),
-                   new BracketHeat(9,  "winner", 2),
-                   new BracketHeat(10, "winner", 2),
-                   new BracketHeat(11, "winner", 2),
-                   new BracketHeat(12, "winner", 2),
-                   new BracketHeat(13, "loser",  0),
-                   new BracketHeat(14, "loser",  0),
-                   new BracketHeat(15, "loser",  0),
-                   new BracketHeat(16, "loser",  0),
-                   new BracketHeat(17, "loser",  1),
-                   new BracketHeat(18, "loser",  1),
-                   new BracketHeat(19, "loser",  1),
-                   new BracketHeat(20, "loser",  1),
-                   new BracketHeat(21, "loser",  2),
-                   new BracketHeat(22, "loser",  2),
-                   new BracketHeat(23, "winner", 3),
-                   new BracketHeat(24, "winner", 3),
-                   new BracketHeat(25, "loser",  3),
-                   new BracketHeat(26, "loser",  3),
-                   new BracketHeat(27, "loser",  4),
-                   new BracketHeat(28, "winner", 4),
-                   new BracketHeat(29, "loser",  5),
-                   new BracketHeat(30, "winner", 5),
+                   new BracketHeat(1,  "preliminary", 0),
+                   new BracketHeat(2,  "preliminary", 0),
+                   new BracketHeat(3,  "preliminary", 0),
+                   new BracketHeat(4,  "preliminary", 0),
+                   new BracketHeat(5,  "preliminary", 1),
+                   new BracketHeat(6,  "preliminary", 1),
+                   new BracketHeat(7,  "preliminary", 1),
+                   new BracketHeat(8,  "preliminary", 1),
+                   new BracketHeat(9,  "winner",      2),
+                   new BracketHeat(10, "winner",      2),
+                   new BracketHeat(11, "winner",      2),
+                   new BracketHeat(12, "winner",      2),
+                   new BracketHeat(13, "loser",       0),
+                   new BracketHeat(14, "loser",       0),
+                   new BracketHeat(15, "loser",       0),
+                   new BracketHeat(16, "loser",       0),
+                   new BracketHeat(17, "loser",       1),
+                   new BracketHeat(18, "loser",       1),
+                   new BracketHeat(19, "loser",       1),
+                   new BracketHeat(20, "loser",       1),
+                   new BracketHeat(21, "loser",       2),
+                   new BracketHeat(22, "loser",       2),
+                   new BracketHeat(23, "winner",      3),
+                   new BracketHeat(24, "winner",      3),
+                   new BracketHeat(25, "loser",       3),
+                   new BracketHeat(26, "loser",       3),
+                   new BracketHeat(27, "loser",       4),
+                   new BracketHeat(28, "winner",      4),
+                   new BracketHeat(29, "loser",       5),
+                   new BracketHeat(30, "winner",      5),
                  ],
     //"fai64":     [],
     //"fai64de":   []
@@ -594,7 +680,7 @@ function build_elimination_brackets(race_bracket_type, race_class_id, ddr_pilot_
                     html += '</div>';
                 }
             } else {
-                let flagImg = getFlagURL(slot.pilot_id, ddr_pilot_data);
+                let flagImg = getFlagURL(pilot);
                 let pilotImg = getPilotImgURL(pilot);
                 let teamImg = getTeamImgURL(pilot);
 
@@ -614,7 +700,7 @@ function build_elimination_brackets(race_bracket_type, race_class_id, ddr_pilot_
         if (bracket_formats[race_bracket_type] != undefined) {
             let bracket_heat_info = bracket_formats[race_bracket_type][i];
 
-            if (bracket_heat_info.type == "winner") {
+            if (bracket_heat_info.type == "winner" || bracket_heat_info.type == "preliminary") {
                 var column_counter = bracket_heat_info.column; 
                 if ($('#bracket_column_' + column_counter).length == 0) {
                     $('#winner_bracket_content').append('<div id="bracket_column_'+column_counter+'" class="bracket_column"></div>');

@@ -34,6 +34,102 @@
 
     <!-- Child template head content -->
 
+<style>
+@font-face {
+    font-family: 'BebasNeue'; /* Nome del font che userai in CSS */
+    src: url('/ddr_overlays/static/fonts/csi/BebasNeue-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+th, td {
+    font-weight:100;
+}
+
+h1.current_heat {
+    font-family: 'BebasNeue';
+    text-align: center;
+    background: #000000;
+}
+
+.time-display {
+    font-family: 'BebasNeue';
+    color: lawngreen;
+}
+
+table.leaderboard {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'BebasNeue', sans-serif;
+    background: #0e0e10;
+    color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 14px;
+    height: auto;
+}
+
+table.leaderboard tbody tr:nth-child(odd) {
+    background-color: #4a2020;
+}
+
+table.leaderboard tbody tr:nth-child(even) {
+    background-color: #121214;
+}
+
+table.leaderboard th, table.leaderboard td {
+    padding: 0px!important;
+    text-align: center;
+    border-bottom: 1px solid #2a2a2d;
+}
+
+table.leaderboard thead {
+    background: #1c1c1e;
+    text-transform: uppercase;
+}
+
+table.leaderboard th, table.leaderboard td {
+    padding: 13px 0px 0px 0px!important;
+    text-align: center;
+    border-bottom: 1px solid #2a2a2d;
+}
+
+table.leaderboard tr:hover {
+    background: #2b2b2f;
+}
+
+table.leaderboard td.pos {
+    font-weight: bold;
+    color: #ff0000;
+}
+
+table.leaderboard td.pilot {
+    text-align: left;
+}
+
+td.avatar {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+}
+
+.avatar-img {
+    width: 90px;
+    height: 86px;
+    border-radius: 0%;
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    display: flex;
+}
+
+td.flag img {
+    width: 44px;
+    height: 42px;
+    object-fit: contain;
+}
+</style>
+
 </head>
 
 <body>
@@ -80,11 +176,6 @@
 
         socket.on('language', default_handler['language']);
 
-        // set up node local store
-        //for (i = 0; i < {{ num_nodes }}; i++) {
-        //    rotorhazard.nodes[i] = new nodeModel();
-        //}
-
         socket.on('race_scheduled', default_handler['race_scheduled']);
 
         socket.on('race_status', default_handler['race_status']);
@@ -118,7 +209,7 @@
             
             leaderboard_type = race.leaderboard.meta.primary_leaderboard;
             $('#leaderboard').empty();
-            $('#leaderboard').append(build_leaderboard(race.leaderboard[leaderboard_type], 'current', race.leaderboard.meta, ddr_pilot_data.length, ddr_pilot_data));
+            $('#leaderboard').append(build_results(race.leaderboard[leaderboard_type], 'current', race.leaderboard.meta, ddr_pilot_data.length, ddr_pilot_data));
 
             var this_leaderboard = race.leaderboard[leaderboard_type];
             var pilot_to_laps = {};
@@ -134,7 +225,7 @@
                         break;
                     }
                 }
-                $('#leaderboard td.laps').eq(i).html(pilot_to_laps[this_callsign] ? pilot_to_laps[this_callsign] : "—");
+                $('#leaderboard td.laps').eq(i).html(pilot_to_laps[this_callsign] || "—");
             }
             
             $('#team_leaderboard').empty();

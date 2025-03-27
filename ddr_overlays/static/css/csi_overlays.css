@@ -11,7 +11,7 @@
 /* NEXT UP - LAST HEAT */ 
 
 #ddr_nextup {
-    background: black;
+    background-color: transparent;
     color: white;
 }
 
@@ -88,6 +88,62 @@ img#raceImage {
     justify-self: center;
 }
 
+
+
+/* LAST HEAT */
+
+#ddr_nextup #nextup_title {
+    font-size: 56px;
+    font-weight: 800;
+    /* color: #013e77; */
+    padding: 0px;
+    text-align: center;
+    font-family: 'BebasNeue';
+    text-transform: uppercase;
+}
+
+.csi-event-title {
+    font-family: 'BebasNeue';
+    justify-self: center;
+    text-align: center;
+    font-size: 25px;
+}
+
+.bracket-img {
+    width: 50px;
+    height: 50px;
+    margin-left: 5px;
+    vertical-align: middle;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.5s ease-in-out;
+}
+
+.bracket-img.zoom-in {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#ddr_nextup .nextup_pilot_position {
+    width: 100%;
+    text-align: center;
+    font-size: 42px;
+    margin-bottom: 8px;
+    font-family: 'BebasNeue';
+}
+
+#lower-cell {
+    padding-right: 0px;
+    padding-left: 0ppx;
+    margin-right: -120px;
+}
+
+#winner-cell {
+    padding-left: 0px;
+}
+
+
+
 /* QUALIFYING RANKING */
 
 table.leaderboard {
@@ -155,6 +211,11 @@ td.team {
     padding-left: 105px;
 }
 
+td.consecutive {
+    color: #00ff00;
+    font-family: 'BebasNeue';
+}
+
 #ddr_leaderboard32 .flag {
     float: unset!important;
     place-self: center;
@@ -180,6 +241,8 @@ td.team {
     width: 260px;
     text-align: center;
 }
+
+
 
 /* NODE CSS */
 #ddr_node #node_info_bar {
@@ -379,3 +442,98 @@ div#node-avatar-container img {
     text-align: center;
 }
 
+
+
+/* BRACKET */
+.bracket_race_pilots {
+    min-width: 200px;
+    white-space: nowrap;
+    background: #000000ab;
+    color: white;
+    font-family: 'bebasneue';
+}
+
+.bracket_race_title {
+    font-family: 'bebasneue';
+    font-size: 22px;
+    font-weight: 200;
+    padding: 4px;
+    text-align: center;
+    background-color: #00c3f1 !important;
+    color: #fff;
+}
+
+.bracket_race_pilot {
+    border-top: 1px solid #ffffff!important;
+    padding: 5px 12px;
+    font-size: 18px;
+    line-height: 1;
+    height: 28px;
+}
+
+.bracket_race_pilot .avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 0px!important;
+    overflow: hidden;
+    margin: 2px 6px 2px 0px;
+}
+
+.bracket_race {
+    border: 0px solid #013e77!important;
+}
+
+.bracket_group_title {
+    font-size: 32px;
+    margin-bottom: 20px;
+    display: flex!important;
+    background: white;
+    color: green;
+    display: flex;
+    place-content: center!important;
+    justify-self: center!important;
+    font-family: 'BebasNeue';
+    font-weight: 700;
+    padding: 0px 20px;
+    border-radius: 6px;
+}
+
+.bracket_group_title_redemption {
+    font-size: 32px;
+    margin-bottom: 20px;
+    display: flex!important;
+    background: orange;
+    display: flex;
+    place-content: center!important;
+    justify-self: center!important;
+    font-family: 'BebasNeue';
+    font-weight: 700;
+    padding: 0px 20px;
+    border-radius: 6px;
+}
+
+.bracket_race_pilot .no_pilot {
+    color: #c2c2c2!important;
+}
+
+#loser_bracket_content .bracket_race_title {
+    font-size: 22px;
+    font-weight: 200;
+    padding: 4px;
+    text-align: center;
+    background-color: #ffa500!important;
+    color: black;
+    font-family: 'bebasneue';
+}
+
+div#bracket_column_1 .bracket_race_title {
+    background: green!important;
+}
+
+div#bracket_column_2 .bracket_race_title {
+    background: green!important;
+}
+
+div#bracket_column_3 .bracket_race_title {
+    background:#ae0707 !important;
+}

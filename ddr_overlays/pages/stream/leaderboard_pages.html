@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="RotorHazard">
     <meta name="google" content="notranslate">
-    <title>Leaderboard Fullscreen</title>
+    <title>Leaderboard Pages</title>
 
     <!-- Icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="/static/image/apple-touch-icon.png">
@@ -33,12 +33,10 @@
     <link rel="stylesheet" href="/static/magnific-1.1.0/magnific-popup.css"></link>
     <link rel="stylesheet" href="/static/stream.css"></link>
     <link rel="stylesheet" href="/ddr_overlays/static/fonts/teko/stylesheet.css"></link>
-    <link rel="stylesheet" href="/ddr_overlays/static/css/ddr_overlays.css"></link>
-    <link rel="stylesheet" href="/ddr_overlays/static/css/csi_overlays.css"></link>
+    <link rel="stylesheet" href="/ddr_overlays/static/css/ddr_overlays.css?ver=1.0"></link>
+    <link rel="stylesheet" href="/ddr_overlays/static/css/csi_overlays.css?ver=1.0"></link>
 
     <!-- Child template head content -->
-
-</head>
 
 <style>
 @font-face {
@@ -48,6 +46,8 @@
     font-style: normal;
 }
 </style>
+
+</head>
 
 <body>
 
@@ -90,7 +90,7 @@
             }
 
             // Stel de interval in om de functie elke 5 seconden te roepen
-            setInterval(rotatePages, 7000);
+            setInterval(rotatePages, 10000);
         };
 
         $(document).ready(function () {

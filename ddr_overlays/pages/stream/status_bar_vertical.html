@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="RotorHazard">
     <meta name="google" content="notranslate">
-    <title>Live Leaderboard</title>
+    <title>Stream Top Bar - {{ getOption("timerName") }}</title>
 
     <!-- Icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="/static/image/apple-touch-icon.png">
@@ -32,7 +32,7 @@
     <style>
 @font-face {
     font-family: 'BebasNeue'; /* Nome del font che userai in CSS */
-    src: url('BebasNeue-Regular.ttf') format('truetype');
+    src: url('/ddr_overlays/static/fonts/csi/BebasNeue-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -85,7 +85,6 @@ body {
 }
 
 .name {
-    font-weight: bold;
     font-size: 1em;
     max-width: 100px;
     overflow: hidden;
@@ -125,9 +124,6 @@ body {
 
     rotorhazard.show_messages = false;
 
-    // the class of the current heat
-    var streamclass;
-
     function race_kickoff(msg) {
         rotorhazard.timer.stopAll();
 
@@ -145,17 +141,6 @@ body {
         // get pi time
         rotorhazard.pi_time_request = window.performance.now();
         socket.emit('get_pi_time');
-
-        socket.emit('load_data', {'load_types': [
-            'current_heat',
-        ]});
-
-        socket.on('current_heat', function (msg) {
-            console.log('Class of the current heat is:', msg.heat_class);
-            if (msg.heat_class) {
-                streamclass = msg.heat_class;
-            }
-        });
 
         socket.on('pi_time', default_handler['pi_time']);
 
@@ -183,18 +168,16 @@ body {
 
             var leaderboard_type = race.leaderboard.meta.primary_leaderboard;
             var leaderboard = race.leaderboard[leaderboard_type];
-            $('#leaderboard').empty();
-            $('#leaderboard').append(build_leaderboard(leaderboard, 'current', race.leaderboard.meta));
 
             $('#the_leaderboard').empty();
             for (var i in leaderboard) {
-                var pilot_data = leaderboard[i];
-                var pilot_id = pilot_data.pilot_id;
-                var pilot_callsign = pilot_data.callsign;
-                var pilot_position = +i+1; // pilot_data.position is null until a pilot has completed at least one lap
-                var pilot_team_url = getTeamImgURL(pilot_data);
+                var pilot = leaderboard[i];
+                var pilot_id = pilot.pilot_id;
+                var pilot_callsign = pilot.callsign;
+                var pilot_position = +i+1; // pilot.position is null until a pilot has completed at least one lap
+                var pilot_team_url = getTeamImgURL(pilot);
 
-                var pilot_gap = pilot_data.time_behind || "0:00.000";
+                var pilot_gap = pilot.time_behind || "0:00.000";
                 var gap_minutes = pilot_gap.slice(0, 1);
                 var gap_seconds = pilot_gap.slice(2, 4);
                 var gap_milliseconds = pilot_gap.slice(5);
@@ -239,7 +222,7 @@ body {
 </script>
 
     <div class="leaderboard">
-    <div class="logocsi"><img src="csilogo.png"></div>
+    <div class="logocsi"><img src="/ddr_overlays/static/imgs/csilogo.png"></div>
     <h3>LIVE STANDINGS</h3>
 
     <div id="the_leaderboard">
@@ -257,7 +240,7 @@ body {
         </div>
         <div class="driver">
             <div class="position">3</div>
-            <div class="team-logo"><img src="team_gace_fpv.png"></div>
+            <div class="team-logo"><img src="team_gace.png"></div>
             <div class="name">Finz</div>
             <div class="gap">+2.367</div>
         </div>

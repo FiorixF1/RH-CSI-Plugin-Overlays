@@ -38,6 +38,31 @@
 
     <!-- Child template head content -->
 
+<style>
+.table-row {
+    display: flex;
+    width: 100%;
+    font-family: 'BebasNeue';
+    font-size: 32px;
+    gap: 365px;
+}
+
+.text-green {
+    color: lightgreen;
+    font-weight: bold;
+}
+
+.text-orange {
+    color: orange;
+    font-weight: bold;
+}
+
+.text-red {
+    color: red;
+    font-weight: bold;
+}
+</style>
+
 </head>
 
 <body>
@@ -52,9 +77,9 @@
         'pilot_data',
         'result_data',
         'heat_data',
-        'leaderboard',
         'class_data',
-        'race_status'
+        'race_status',
+        'leaderboard',
     ];
 
     rotorhazard.show_messages = false;
@@ -165,7 +190,7 @@
 
                     var bracket_format_info = bracket_formats[race_bracket_type];
 
-                    let is_winner_bracket = (bracket_format_info[heat_index].type == "winner");
+                    let is_winner_bracket = (bracket_format_info[heat_index].type == "winner") || (bracket_format_info[heat_index].type == "preliminary");
                     let is_final_heat = (heat_number >= bracket_format_info[bracket_format_info.length-1].number);
 
                     // the result is nicely placed for heats with four pilots
@@ -173,22 +198,52 @@
                         $('#winner-cell').empty();
                         $('#lower-cell').empty();
                     } else {
-                        // left side
+                        // WINNER CELL
+                        let winnerText = "";
+                        let winnerClass = "";
+                        let winnerImg = "";
+
                         if (bracket_format_info[heat_index].advance_to != undefined) {
-                            $('#winner-cell').text("Advance to Race " + bracket_format_info[heat_index].advance_to);
+                            winnerText = "Advance to Race " + bracket_format_info[heat_index].advance_to;
+                            winnerClass = "text-green";
+                            winnerImg = "gotowinner.png";
                         } else if (is_winner_bracket) {
-                            $('#winner-cell').text("Advance to Winner Bracket");
+                            winnerText = "Advance to Winner Bracket";
+                            winnerClass = "text-green";
+                            winnerImg = "gotowinner.png";
                         } else {
-                            $('#winner-cell').text("Advance to Lower Bracket");
+                            winnerText = "Advance to Redemption Bracket";
+                            winnerClass = "text-orange";
+                            winnerImg = "advance-redemption.png";
                         }
 
-                        // right side
+                        $('#winner-cell')
+                            .attr("class", winnerClass)
+                            .html(winnerText + ' <img class="bracket-img" src="/ddr_overlays/static/imgs/' + winnerImg + '">');
+
+                        // LOWER CELL
+                        let lowerText = "";
+                        let lowerClass = "";
+                        let lowerImg = "";
+
                         if (is_winner_bracket) {
-                            $('#lower-cell').text("Go to Lower Bracket");
+                            lowerText = "Go to Redemption Bracket";
+                            lowerClass = "text-orange";
+                            lowerImg = "gotoredemption.png";
                         } else {
-                            $('#lower-cell').text("Eliminated");
+                            lowerText = "Eliminated";
+                            lowerClass = "text-red";
+                            lowerImg = "eliminated.png";
                         }
+
+                        $('#lower-cell')
+                            .attr("class", lowerClass)
+                            .html(lowerText + ' <img class="bracket-img" src="/ddr_overlays/static/imgs/' + lowerImg + '">');
                     }
+
+                    setTimeout(function () {
+                        $('.bracket-img').addClass('zoom-in');
+                    }, 5000);
                 }
             }
         });
@@ -209,14 +264,15 @@
 <main class="page-stream">
 
     <div id="ddr_nextup">
-
+        <div class="csi-event-title">
+            <span class="curr_event_name">{{ getOption('eventName') }}</span>
+        </div>
         <div id="nextup_title">
             Results:
         </div>
 
         <div id="title">
-            <span class="curr_heat_title"></span> - 
-            <span class="curr_event_name">{{ getOption('eventName') }}</span>
+            <span class="curr_heat_title"></span>
         </div>
 
         <div class="table">
@@ -236,13 +292,13 @@
 
                 <div class="nextup_pilot_avatar">
                     <div class="nextup_pilot_avatar_mask">
-                        <img src="/ddr/static/imgs/no-avatar.webp" alt="Avatar">
+                        <img src="/ddr_overlays/static/imgs/no_avatar.png" alt="Avatar">
                     </div>
                 </div>
 
                 <div class="nextup_pilot_flag">
                     <div class="nextup_pilot_flag_mask">
-                        <img src="/ddr/static/imgs/flags/nl.jpg">
+                        <img src="/ddr_overlays/static/imgs/flags/it.png">
                     </div>
                 </div>
 

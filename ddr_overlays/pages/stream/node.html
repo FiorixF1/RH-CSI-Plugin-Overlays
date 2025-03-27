@@ -34,8 +34,8 @@
     <link rel="stylesheet" href="/static/stream.css"></link>
     <link rel="stylesheet" href="/ddr_overlays/static/fonts/teko/stylesheet.css"></link>
     <link rel="stylesheet" href="/ddr_overlays/static/fonts/inconsolata/stylesheet.css"></link>
-    <link rel="stylesheet" href="/ddr_overlays/static/css/ddr_overlays.css"></link>
-    <link rel="stylesheet" href="/ddr_overlays/static/css/csi_overlays.css"></link>
+    <link rel="stylesheet" href="/ddr_overlays/static/css/ddr_overlays.css?ver=1.0"></link>
+    <link rel="stylesheet" href="/ddr_overlays/static/css/csi_overlays.css?ver=1.0"></link>
 
     <!-- Child template head content -->
 
@@ -195,9 +195,6 @@
             }
 
             var pilotNodeImg = '';
-
-            var pilot_attributes;
-            var curr_pilot_flag;
             var country_flag;
 
             /* Pilots */
@@ -212,8 +209,7 @@
                         pilot = rotorhazard.event.pilots[pilot];
 
                         if (pilot.country) {
-                            country_upper = pilot.country;
-                            country_flag = '<img class="country_flag" src="/ddr_overlays/static/imgs/flags/' + country_upper + '.png">';
+                            country_flag = '<img class="country_flag" src="' + getFlagURL(pilot) + '">';
                             $('#node_flag').html(country_flag);
                         }
 
@@ -268,11 +264,7 @@
                         // $('#laps').html(pilot_data.laps);
                         // $('#fastest_lap').html(pilot_data.fastest_lap);
 
-                        var pilotImg = '/static/user/avatars/' + pilot_data.callsign.replace(/ /g,"_").toLowerCase() + '.png';
-
-                        if (!imageExists(pilotImg)) {
-                            pilotImg = '/ddr_overlays/static/imgs/no_avatar.png';
-                        }
+                        var pilotImg = getPilotImgURL(pilot_data);
 
                         if (pilotNodeImg !== pilotImg && pilotImg !== '/ddr_overlays/static/imgs/no_avatar.png') {
                             pilotNodeImg = pilotImg;
