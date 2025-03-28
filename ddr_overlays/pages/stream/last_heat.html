@@ -77,9 +77,9 @@
         'pilot_data',
         'result_data',
         'heat_data',
+        'leaderboard',
         'class_data',
         'race_status',
-        'leaderboard',
     ];
 
     rotorhazard.show_messages = false;
@@ -178,73 +178,73 @@
                 // refresh only when the heat is finished
                 // corner case (quite useless but just for fun): if a heat has only one pilot, it doesn't generate the "Winner is <pilot>" status message at the end,
                 // hence the overlay is not updated :D
-                if (race.status_msg) {
-                    let heat_index = heat_number-1;
+                console.log("Found heat number " + heat_number);
+  
+                let heat_index = heat_number-1;
 
-                    $('.curr_heat_title').html(race.displayname);
+                $('.curr_heat_title').html(race.displayname);
 
-                    $('#nextup_pilot_box').empty();
+                $('#nextup_pilot_box').empty();
 
-                    var leaderboard_type = race.leaderboard.meta.primary_leaderboard;
-                    build_nextup(race.leaderboard[leaderboard_type], 'current', race.leaderboard.meta, ddr_pilot_data, true);
+                var leaderboard_type = race.leaderboard.meta.primary_leaderboard;
+                build_nextup(race.leaderboard[leaderboard_type], 'current', race.leaderboard.meta, ddr_pilot_data, true);
 
-                    var bracket_format_info = bracket_formats[race_bracket_type];
+                var bracket_format_info = bracket_formats[race_bracket_type];
 
-                    let is_winner_bracket = (bracket_format_info[heat_index].type == "winner") || (bracket_format_info[heat_index].type == "preliminary");
-                    let is_final_heat = (heat_number >= bracket_format_info[bracket_format_info.length-1].number);
+                let is_winner_bracket = (bracket_format_info[heat_index].type == "winner") || (bracket_format_info[heat_index].type == "preliminary");
+                let is_final_heat = (heat_number >= bracket_format_info[bracket_format_info.length-1].number);
 
-                    // the result is nicely placed for heats with four pilots
-                    if (is_final_heat) {
-                        $('#winner-cell').empty();
-                        $('#lower-cell').empty();
+                // the result is nicely placed for heats with four pilots
+                if (is_final_heat) {
+                    $('#winner-cell').empty();
+                    $('#lower-cell').empty();
+                } else {
+                    // WINNER CELL
+                    let winnerText = "";
+                    let winnerClass = "";
+                    let winnerImg = "";
+
+                    if (bracket_format_info[heat_index].advance_to != undefined) {
+                        winnerText = "Advance to Race " + bracket_format_info[heat_index].advance_to;
+                        winnerClass = "text-green";
+                        winnerImg = "gotowinner.png";
+                    } else if (is_winner_bracket) {
+                        winnerText = "Advance to Winner Bracket";
+                        winnerClass = "text-green";
+                        winnerImg = "gotowinner.png";
                     } else {
-                        // WINNER CELL
-                        let winnerText = "";
-                        let winnerClass = "";
-                        let winnerImg = "";
-
-                        if (bracket_format_info[heat_index].advance_to != undefined) {
-                            winnerText = "Advance to Race " + bracket_format_info[heat_index].advance_to;
-                            winnerClass = "text-green";
-                            winnerImg = "gotowinner.png";
-                        } else if (is_winner_bracket) {
-                            winnerText = "Advance to Winner Bracket";
-                            winnerClass = "text-green";
-                            winnerImg = "gotowinner.png";
-                        } else {
-                            winnerText = "Advance to Redemption Bracket";
-                            winnerClass = "text-orange";
-                            winnerImg = "advance-redemption.png";
-                        }
-
-                        $('#winner-cell')
-                            .attr("class", winnerClass)
-                            .html(winnerText + ' <img class="bracket-img" src="/ddr_overlays/static/imgs/' + winnerImg + '">');
-
-                        // LOWER CELL
-                        let lowerText = "";
-                        let lowerClass = "";
-                        let lowerImg = "";
-
-                        if (is_winner_bracket) {
-                            lowerText = "Go to Redemption Bracket";
-                            lowerClass = "text-orange";
-                            lowerImg = "gotoredemption.png";
-                        } else {
-                            lowerText = "Eliminated";
-                            lowerClass = "text-red";
-                            lowerImg = "eliminated.png";
-                        }
-
-                        $('#lower-cell')
-                            .attr("class", lowerClass)
-                            .html(lowerText + ' <img class="bracket-img" src="/ddr_overlays/static/imgs/' + lowerImg + '">');
+                        winnerText = "Advance to Redemption Bracket";
+                        winnerClass = "text-orange";
+                        winnerImg = "advance-redemption.png";
                     }
 
-                    setTimeout(function () {
-                        $('.bracket-img').addClass('zoom-in');
-                    }, 5000);
+                    $('#winner-cell')
+                        .attr("class", winnerClass)
+                        .html(winnerText + ' <img class="bracket-img" src="/ddr_overlays/static/imgs/' + winnerImg + '">');
+
+                    // LOWER CELL
+                    let lowerText = "";
+                    let lowerClass = "";
+                    let lowerImg = "";
+
+                    if (is_winner_bracket) {
+                        lowerText = "Go to Redemption Bracket";
+                        lowerClass = "text-orange";
+                        lowerImg = "gotoredemption.png";
+                    } else {
+                        lowerText = "Eliminated";
+                        lowerClass = "text-red";
+                        lowerImg = "eliminated.png";
+                    }
+
+                    $('#lower-cell')
+                        .attr("class", lowerClass)
+                        .html(lowerText + ' <img class="bracket-img" src="/ddr_overlays/static/imgs/' + lowerImg + '">');
                 }
+
+                setTimeout(function () {
+                    $('.bracket-img').addClass('zoom-in');
+                }, 5000);
             }
         });
 
