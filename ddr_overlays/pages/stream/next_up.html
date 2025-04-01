@@ -52,9 +52,9 @@
         'pilot_data',
         'result_data',
         'heat_data',
-        'leaderboard',
         'class_data',
-        'race_status'
+        'leaderboard',
+        'race_status',
     ];
 
     rotorhazard.show_messages = false;
@@ -108,13 +108,6 @@
 
         socket.on('class_data', function (msg) {
             ddr_class_data = msg.classes;
-
-            Object.values(ddr_class_data).forEach(race_class => {
-                if (race_class.id == race_class_id) {
-                    console.log(race_class);
-                    race_class_name = race_class.name;
-                }
-            });
         });
 
         socket.on('heartbeat', default_handler['heartbeat']);
@@ -137,32 +130,43 @@
         socket.on('stop_timer', default_handler['stop_timer']);
     });
 
-    let race_class_id = '{{ class_id }}';
+    let race_class_id; // do not use '{ class id }' from URL, it is computed automatically
     let race_class_name;
     let race_bracket_type = '{{ bracket_type }}';
 
     function updateRaceImage(race) {
         var heat_number = 0;
         if (ddr_race_data != undefined) {
-            // reason for this: race.heat counts heats of every class
-            // we need the heat number inside the current class
-            var elimination_heats = ddr_race_data.heats_by_class[race_class_id];
-            for (let i = 0; i < elimination_heats.length; i++) {
-                const this_heat = elimination_heats[i];
-                if (elimination_heats[i] == race.heat) {
-                    heat_number = i+1;
+            // reason for this: race.heat counts heats of every class (as a global counter),
+            // we need the heat number with respect to its class
+            for (let class_id in ddr_race_data.heats_by_class) {
+                heat_number = ddr_race_data.heats_by_class[class_id].indexOf(race.heat) + 1;
+                if (heat_number != 0) {
+                    // class found, save data
+                    race_class_id = class_id;
+                    Object.values(ddr_class_data).forEach(race_class => {
+                        if (race_class.id == race_class_id) {
+                            race_class_name = race_class.name;
+                        }
+                    });
+                    break;
                 }
             }
         } else if (ddr_heat_data != undefined) {
             // alternative method if ddr_race_data is not available
-            for (let i = 0; i < ddr_heat_data.heats.length; i++) {
-                const this_heat = ddr_heat_data.heats[i];
-                if (this_heat.class_id == race_class_id) {
-                    ++heat_number;
-                    if (this_heat.id == race.heat) {
-                        break;
+            let current_heat = ddr_heat_data.heats.find(h => h.id == race.heat);
+            let heats_by_current_class = ddr_heat_data.heats
+                .filter(h => h.class_id == current_heat.class_id)
+                .map(h => h.id);
+            heat_number = heats_by_current_class.indexOf(race.heat) + 1;
+            if (heat_number != 0) {
+                // class found, save data
+                race_class_id = current_heat.class_id;
+                Object.values(ddr_class_data).forEach(race_class => {
+                    if (race_class.id == race_class_id) {
+                        race_class_name = race_class.name;
                     }
-                }
+                });
             }
         }
 
