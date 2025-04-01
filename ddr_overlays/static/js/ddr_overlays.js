@@ -173,7 +173,7 @@ function build_nextup(leaderboard, display_type, meta, ddr_pilot_data, show_posi
 
     for (var i in leaderboard) {
         let pilot_name = leaderboard[i].callsign;       
-        let flagImg = getFlagURL(leaderboard[i]);
+        let flagImg = getFlagURL(leaderboard[i].pilot_id, ddr_pilot_data);
         let pilotImg = getPilotImgURL(leaderboard[i]);
         let teamImg = getTeamImgURL(leaderboard[i]);
 
@@ -278,7 +278,7 @@ function build_leaderboard(leaderboard, display_type, meta, number_of_pilots=999
 
             let teamImg = getTeamImgURL(leaderboard[i]);
 
-            let flagImg = getFlagURL(leaderboard[i]);
+            let flagImg = getFlagURL(leaderboard[i].pilot_id, ddr_pilot_data);
             row.append('<td class="flag" id="pilot_id_flag_' + leaderboard[i].pilot_id + '"><img class="country_flag" src="' + flagImg + '"></td>');
 
             var pilot_name_flag = leaderboard[i].callsign;
@@ -444,7 +444,7 @@ function build_results(leaderboard, display_type='by_race_time', meta={}, number
         const avatarUrl = getPilotImgURL(pilot);
         row.append(`<td class="avatar"><div class="avatar-img" style="background-image: url('${avatarUrl}')"></div></td>`);
 
-        const flagUrl = getFlagURL(pilot);
+        const flagUrl = getFlagURL(pilot.pilot_id, ddr_pilot_data);
         row.append(`<td class="flag"><img class="country_flag" src="${flagUrl}"></td>`);
 
         row.append(`<td class="pilot">${pilot.callsign}</td>`);
@@ -506,12 +506,24 @@ function build_results(leaderboard, display_type='by_race_time', meta={}, number
 
 
 /* Pilot data retrieval */
-function getFlagURL(pilot) {
-    let country_lower = 'it';
-    if (pilot.country) {
-        country_lower = pilot.country.toLowerCase();
+function getFlagURL(pilot_id, ddr_pilot_data) {
+    return '/ddr_overlays/static/imgs/flags/' + getPilotFlag(pilot_id, ddr_pilot_data) + '.png';
+}
+
+function getPilotFlag(pilot_id, ddr_pilot_data) {
+    count = Object.keys(ddr_pilot_data).length;
+    for (var i = 0; i < count; i++) {
+        let pilot = ddr_pilot_data[i];
+        if (pilot.pilot_id == pilot_id) {
+            pilot = ddr_pilot_data[i];
+            if (pilot.country) {
+                country_upper = pilot.country;
+                return country_upper;
+            }
+            break;
+        }
     }
-    return '/ddr_overlays/static/imgs/flags/' + country_lower + '.png';
+    return 'it';
 }
 
 function getPilotImgURL(pilot) {
@@ -680,7 +692,7 @@ function build_elimination_brackets(race_bracket_type, race_class_id, ddr_pilot_
                     html += '</div>';
                 }
             } else {
-                let flagImg = getFlagURL(pilot);
+                let flagImg = getFlagURL(pilot.pilot_id, ddr_pilot_data);
                 let pilotImg = getPilotImgURL(pilot);
                 let teamImg = getTeamImgURL(pilot);
 
