@@ -148,7 +148,8 @@ img#raceImage {
 
 table.leaderboard {
     width: 1200px;
-    min-width:100px;
+    min-width: 100px;
+    background: transparent;
 }
 
 thead {
