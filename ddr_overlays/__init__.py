@@ -45,7 +45,7 @@ def initialize(rhapi):
     rhapi.fields.register_pilot_attribute( country_ui_field )
     if custom_teams:
         try:
-            rhapi._racecontext.rhui._racecontext.rhdata.TEAM_NAMES_LIST = [''] + teams_data
+            rhapi._racecontext.rhui._racecontext.rhdata.TEAM_NAMES_LIST = ['A', ''] + teams_data
         except:
             rhapi.fields.register_pilot_attribute( team_ui_field )
     else:
