@@ -209,7 +209,7 @@
                         pilot = rotorhazard.event.pilots[pilot];
 
                         if (pilot.country) {
-                            country_flag = '<img class="country_flag" src="' + getFlagURL(pilot) + '">';
+                            country_flag = '<img class="country_flag" src="' + getFlagURL(pilot_id, msg.pilots) + '">';
                             $('#node_flag').html(country_flag);
                         }
 

@@ -507,7 +507,11 @@ function build_results(leaderboard, display_type='by_race_time', meta={}, number
 
 /* Pilot data retrieval */
 function getFlagURL(pilot_id, ddr_pilot_data) {
-    return '/ddr_overlays/static/imgs/flags/' + getPilotFlag(pilot_id, ddr_pilot_data) + '.png';
+    let flagImg = '/ddr_overlays/static/imgs/flags/' + getPilotFlag(pilot_id, ddr_pilot_data) + '.png';
+    if (!imageExists(flagImg)) {
+        flagImg = '/ddr_overlays/static/imgs/flags/it.png';
+    }
+    return flagImg;
 }
 
 function getPilotFlag(pilot_id, ddr_pilot_data) {
