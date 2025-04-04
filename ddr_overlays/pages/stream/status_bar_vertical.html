@@ -124,6 +124,8 @@ body {
 
     rotorhazard.show_messages = false;
 
+    var current_pilots = new Set();
+
     function race_kickoff(msg) {
         rotorhazard.timer.stopAll();
 
@@ -169,29 +171,69 @@ body {
             var leaderboard_type = race.leaderboard.meta.primary_leaderboard;
             var leaderboard = race.leaderboard[leaderboard_type];
 
-            $('#the_leaderboard').empty();
+            var new_current_pilots = new Set();
+            var pilot_cache = {};
             for (var i in leaderboard) {
-                var pilot = leaderboard[i];
-                var pilot_id = pilot.pilot_id;
-                var pilot_callsign = pilot.callsign;
-                var pilot_position = +i+1; // pilot.position is null until a pilot has completed at least one lap
-                var pilot_team_url = getTeamImgURL(pilot);
+                leaderboard[i].position = +i+1; // pilot.position is null until the pilot has completed at least one lap, here we make sure it is a valid number
+                new_current_pilots.add(leaderboard[i].pilot_id);
+                pilot_cache[leaderboard[i].callsign] = leaderboard[i];
+            }
 
-                var pilot_gap = pilot.time_behind || "0:00.000";
-                var gap_minutes = pilot_gap.slice(0, 1);
-                var gap_seconds = pilot_gap.slice(2, 4);
-                var gap_milliseconds = pilot_gap.slice(5);
-                var printable_gap = (pilot_gap != "0:00.000") ?
-                    "+" + +gap_seconds + "." + gap_milliseconds :
-                    "-"; // mostra solo i secondi senza leading zero
+            if (!setsAreEqual(current_pilots, new_current_pilots)) {
+                // pilots have changed, redraw everything
+                $('#the_leaderboard').empty();
+                for (var i in leaderboard) {
+                    var pilot = leaderboard[i];
+                    var pilot_id = pilot.pilot_id;
+                    var pilot_callsign = pilot.callsign;
+                    var pilot_position = +i+1; // pilot.position is null until a pilot has completed at least one lap
+                    var pilot_team_url = getTeamImgURL(pilot);
 
-                var html = "<div class='driver'>" +
-                             "<div class='position'>" + pilot_position + "</div>" +
-                             "<div class='team-logo'><img src='" + pilot_team_url + "'></div>" +
-                             "<div class='name'>" + pilot_callsign + "</div>" +
-                             "<div class='gap'>" + printable_gap + "</div>" +
-                           "</div>"
-                $("#the_leaderboard").append(html);
+                    var pilot_gap = pilot.time_behind || "0:00.000";
+                    var gap_minutes = pilot_gap.slice(0, 1);
+                    var gap_seconds = pilot_gap.slice(2, 4);
+                    var gap_milliseconds = pilot_gap.slice(5);
+                    var printable_gap = (pilot_gap != "0:00.000") ?
+                        "+" + +gap_seconds + "." + gap_milliseconds :
+                        "---"; // mostra solo i secondi senza leading zero
+
+                    var html = "<div class='driver'>" +
+                                 "<div class='position'>" + pilot_position + "</div>" +
+                                 "<div class='team-logo'><img src='" + pilot_team_url + "'></div>" +
+                                 "<div class='name'>" + pilot_callsign + "</div>" +
+                                 "<div class='gap'>" + printable_gap + "</div>" +
+                               "</div>"
+                    $("#the_leaderboard").append(html);
+                }
+            } else {
+                // pilots have not changed, just update values and ordering
+                $(".driver").each(function() {
+                    const pilot_callsign = $(this).find(".name").text().trim();
+                    const pilot = pilot_cache[pilot_callsign];
+                    
+                    var pilot_gap = pilot.time_behind || "0:00.000";
+                    var gap_minutes = pilot_gap.slice(0, 1);
+                    var gap_seconds = pilot_gap.slice(2, 4);
+                    var gap_milliseconds = pilot_gap.slice(5);
+                    var printable_gap = (pilot_gap != "0:00.000") ?
+                        "+" + +gap_seconds + "." + gap_milliseconds :
+                        "---"; // mostra solo i secondi senza leading zero
+                    
+                    // update values
+                    $(this).find(".position").text(pilot_position);
+                    $(this).find(".gap").text(printable_gap);
+                });
+                
+                // update order according to new positions
+                const the_leaderboard = $("#the_leaderboard");
+
+                const $drivers = the_leaderboard.children(".driver").sort((a, b) => {
+                    const posA = parseInt($(a).find(".position").text(), 10);
+                    const posB = parseInt($(b).find(".position").text(), 10);
+                    return posA - posB;
+                });
+
+                the_leaderboard.append($drivers);
             }
             
             $('#team_leaderboard').empty();

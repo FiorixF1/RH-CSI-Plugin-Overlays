@@ -74,6 +74,8 @@ body {
 
     rotorhazard.show_messages = false;
 
+    var current_pilots = new Set();
+
     function race_kickoff(msg) {
         rotorhazard.timer.stopAll();
 
@@ -119,36 +121,78 @@ body {
             var leaderboard_type = race.leaderboard.meta.primary_leaderboard;
             var leaderboard = race.leaderboard[leaderboard_type];
 
-            $(".lbh-pilot-container-center").empty();
+            var new_current_pilots = new Set();
+            var pilot_cache = {};
             for (var i in leaderboard) {
-                var pilot = leaderboard[i];
-                var pilot_id = pilot.pilot_id;
-                var pilot_callsign = pilot.callsign;
-                var pilot_position = +i+1; // pilot.position is null until a pilot has completed at least one lap
-                var pilot_image_url = getPilotImgURL(pilot);
+                leaderboard[i].position = +i+1; // pilot.position is null until the pilot has completed at least one lap, here we make sure it is a valid number
+                new_current_pilots.add(leaderboard[i].pilot_id);
+                pilot_cache[leaderboard[i].callsign] = leaderboard[i];
+            }
+            
+            if (!setsAreEqual(current_pilots, new_current_pilots)) {
+                // pilots have changed, redraw everything
+                $(".lbh-pilot-container-center").empty();
+                for (var i in leaderboard) {
+                    var pilot = leaderboard[i];
+                    var pilot_id = pilot.pilot_id;
+                    var pilot_callsign = pilot.callsign;
+                    var pilot_position = pilot.position;
+                    var pilot_image_url = getPilotImgURL(pilot);
 
-                var pilot_last_lap = pilot.last_lap || "0:00.000";
-                var lap_minutes = pilot_last_lap.slice(0, 1);
-                var lap_seconds = pilot_last_lap.slice(2, 4);
-                var lap_milliseconds = pilot_last_lap.slice(5);
-                var printable_lap = (pilot_last_lap != "0:00.000") ?
-                    +lap_seconds + "." + lap_milliseconds :
-                    "-"; // mostra solo i secondi senza leading zero
+                    var pilot_last_lap = pilot.last_lap || "0:00.000";
+                    var lap_minutes = pilot_last_lap.slice(0, 1);
+                    var lap_seconds = pilot_last_lap.slice(2, 4);
+                    var lap_milliseconds = pilot_last_lap.slice(5);
+                    var printable_lap = (pilot_last_lap != "0:00.000") ?
+                        +lap_seconds + "." + lap_milliseconds :
+                        "---"; // mostra solo i secondi senza leading zero
 
-                var html = "<div class='lbh-driver-wrapper'>" +
-                             "<div class='lbh-driver'>" +
-                               "<div class='lbh-driver-top'>" +
-                                "<div class='lbh-position'>" + pilot_position + "</div>" +
-                                "<div class='lbh-image'><img src='" + pilot_image_url +"'></div>" +
-                                "<div class='lbh-name'>" + pilot_callsign + "</div>" +
-                               "</div>" +
-                             "</div>" +
-                             "<div class='lbh-info-row'>" +
-                               "<div class='lbh-lap-time-box'>Lap Time</div>" +
-                               "<div class='lbh-gap-box'>" + printable_lap + "</div>" +
-                             "</div>" +
-                           "</div>";
-                $(".lbh-pilot-container-center").append(html);
+                    var html = "<div class='lbh-driver-wrapper'>" +
+                                 "<div class='lbh-driver'>" +
+                                   "<div class='lbh-driver-top'>" +
+                                    "<div class='lbh-position'>" + pilot_position + "</div>" +
+                                    "<div class='lbh-image'><img src='" + pilot_image_url +"'></div>" +
+                                    "<div class='lbh-name'>" + pilot_callsign + "</div>" +
+                                   "</div>" +
+                                 "</div>" +
+                                 "<div class='lbh-info-row'>" +
+                                   "<div class='lbh-lap-time-box'>Lap Time</div>" +
+                                   "<div class='lbh-gap-box'>" + printable_lap + "</div>" +
+                                 "</div>" +
+                               "</div>";
+                    $(".lbh-pilot-container-center").append(html);
+                }
+                current_pilots = new Set(new_current_pilots);
+            } else {
+                // pilots have not changed, just update values and ordering
+                $(".lbh-driver-wrapper").each(function() {
+                    const pilot_callsign = $(this).find(".lbh-name").text().trim();
+                    const pilot = pilot_cache[pilot_callsign];
+                    
+                    var pilot_position = pilot.position;
+                    var pilot_last_lap = pilot.last_lap || "0:00.000";
+                    var lap_minutes = pilot_last_lap.slice(0, 1);
+                    var lap_seconds = pilot_last_lap.slice(2, 4);
+                    var lap_milliseconds = pilot_last_lap.slice(5);
+                    var printable_lap = (pilot_last_lap != "0:00.000") ?
+                        +lap_seconds + "." + lap_milliseconds :
+                        "---"; // mostra solo i secondi senza leading zero
+                    
+                    // update values
+                    $(this).find(".lbh-position").text(pilot_position);
+                    $(this).find(".lbh-gap-box").text(printable_lap);
+                });
+                
+                // update order according to new positions
+                const the_leaderboard = $(".lbh-pilot-container-center");
+
+                const $drivers = the_leaderboard.children(".lbh-driver-wrapper").sort((a, b) => {
+                    const posA = parseInt($(a).find(".lbh-position").text(), 10);
+                    const posB = parseInt($(b).find(".lbh-position").text(), 10);
+                    return posA - posB;
+                });
+
+                the_leaderboard.append($drivers);
             }
             
             $('#team_leaderboard').empty();
