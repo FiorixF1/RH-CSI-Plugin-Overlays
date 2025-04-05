@@ -139,11 +139,11 @@ body {
                     var pilot_position = pilot.position;
                     var pilot_image_url = getPilotImgURL(pilot);
 
-                    var pilot_last_lap = pilot.last_lap || "0:00.000";
-                    var lap_minutes = pilot_last_lap.slice(0, 1);
-                    var lap_seconds = pilot_last_lap.slice(2, 4);
-                    var lap_milliseconds = pilot_last_lap.slice(5);
-                    var printable_lap = (pilot_last_lap != "0:00.000") ?
+                    var pilot_last_lap_ms = pilot.last_lap_raw ? Math.round(pilot.last_lap_raw) : 0;
+                    var lap_minutes = Math.floor(pilot_last_lap_ms / 60000);
+                    var lap_seconds = Math.floor(pilot_last_lap_ms / 1000) % 60;
+                    var lap_milliseconds = pilot_last_lap_ms % 1000;
+                    var printable_lap = (pilot_last_lap_ms != 0) ?
                         +lap_seconds + "." + lap_milliseconds :
                         "---"; // mostra solo i secondi senza leading zero
 
@@ -170,11 +170,11 @@ body {
                     const pilot = pilot_cache[pilot_callsign];
                     
                     var pilot_position = pilot.position;
-                    var pilot_last_lap = pilot.last_lap || "0:00.000";
-                    var lap_minutes = pilot_last_lap.slice(0, 1);
-                    var lap_seconds = pilot_last_lap.slice(2, 4);
-                    var lap_milliseconds = pilot_last_lap.slice(5);
-                    var printable_lap = (pilot_last_lap != "0:00.000") ?
+                    var pilot_last_lap_ms = pilot.last_lap_raw ? Math.round(pilot.last_lap_raw) : 0;
+                    var lap_minutes = Math.floor(pilot_last_lap_ms / 60000);
+                    var lap_seconds = Math.floor(pilot_last_lap_ms / 1000) % 60;
+                    var lap_milliseconds = pilot_last_lap_ms % 1000;
+                    var printable_lap = (pilot_last_lap_ms != 0) ?
                         +lap_seconds + "." + lap_milliseconds :
                         "---"; // mostra solo i secondi senza leading zero
                     

@@ -291,9 +291,9 @@ function build_leaderboard(leaderboard, display_type, meta, number_of_pilots=999
                 row.append('<td class="starts">' + leaderboard[i].starts + '</td>');
             }
             if (display_type == 'by_race_time' ||
-            display_type == 'heat' ||
-            display_type == 'round' ||
-            display_type == 'current') {
+                display_type == 'heat' ||
+                display_type == 'round' ||
+                display_type == 'current') {
                 var lap = leaderboard[i].laps;
                 if (!lap || lap == '0:00.000')
                     lap = '&#8212;';
@@ -301,15 +301,18 @@ function build_leaderboard(leaderboard, display_type, meta, number_of_pilots=999
 
                 if (meta.start_behavior == 2) {
                     var lap = leaderboard[i].total_time_laps;
+                    var lap_raw = leaderboard[i].total_time_laps_raw;
                 } else {
                     var lap = leaderboard[i].total_time;
+                    var lap_raw = leaderboard[i].total_time_raw;
                 }
-                if (!lap || lap == '0:00.000')
+                if (!lap_raw || lap_raw == 0)
                     lap = '&#8212;';
                 row.append('<td class="total">'+ lap +'</td>');
 
                 var lap = leaderboard[i].average_lap;
-                if (!lap || lap == '0:00.000')
+                var lap_raw = leaderboard[i].average_lap_raw;
+                if (!lap_raw || lap_raw == 0)
                     lap = '&#8212;';
                 row.append('<td class="avg">'+ lap +'</td>');
             }
@@ -318,7 +321,8 @@ function build_leaderboard(leaderboard, display_type, meta, number_of_pilots=999
                 display_type == 'round' ||
                 display_type == 'current') {
                 var lap = leaderboard[i].fastest_lap;
-                if (!lap || lap == '0:00.000')
+                var lap_raw = leaderboard[i].fastest_lap_raw;
+                if (!lap_raw || lap_raw == 0)
                     lap = '&#8212;';
 
                 var el = $('<td class="fast">'+ lap +'</td>');
@@ -346,7 +350,7 @@ function build_leaderboard(leaderboard, display_type, meta, number_of_pilots=999
                 display_type == 'round' ||
                 display_type == 'current') {
                 var data = leaderboard[i];
-                if (!data.consecutives || data.consecutives == '0:00.000') {
+                if (!data.consecutives_raw || data.consecutives_raw == 0) {
                     lap = '&#8212;';
                 } else {
                     lap = data.consecutives_base + '/' + data.consecutives;
@@ -437,7 +441,7 @@ function build_results(leaderboard, display_type='by_race_time', meta={}, number
     leaderboard.slice(0, number_of_pilots).forEach(pilot => {
         const row = $(`<tr id="pilot_id_${pilot.pilot_id}">`);
 
-        const blankIfZero = val => (!val || val === '0:00.000') ? '&#8212;' : val;
+        const blankIfZero = (val, val_raw) => (!val_raw || val_raw == 0) ? '&#8212;' : val;
 
         row.append(`<td class="pos">${pilot.position || '-'}</td>`);
 
@@ -453,14 +457,15 @@ function build_results(leaderboard, display_type='by_race_time', meta={}, number
         if (display_starts) row.append(`<td class="starts">${pilot.starts}</td>`);
 
         if (['by_race_time', 'heat', 'round', 'current'].includes(display_type)) {
-            row.append(`<td class="laps">${blankIfZero(pilot.laps)}</td>`);
+            row.append(`<td class="laps">${blankIfZero(pilot.laps, pilot.laps)}</td>`);
             const total = meta.start_behavior == 2 ? pilot.total_time_laps : pilot.total_time;
-            row.append(`<td class="total">${blankIfZero(total)}</td>`);
-            row.append(`<td class="avg">${blankIfZero(pilot.average_lap)}</td>`);
+            const total_raw = meta.start_behavior == 2 ? pilot.total_time_laps_raw : pilot.total_time_raw;
+            row.append(`<td class="total">${blankIfZero(total, total_raw)}</td>`);
+            row.append(`<td class="avg">${blankIfZero(pilot.average_lap, pilot.average_lap_raw)}</td>`);
         }
 
         if (['by_fastest_lap', 'heat', 'round', 'current'].includes(display_type)) {
-            const fastest = blankIfZero(pilot.fastest_lap);
+            const fastest = blankIfZero(pilot.fastest_lap, pilot.fastest_lap_raw);
             const el = $(`<td class="fast">${fastest}</td>`);
             if (pilot.fastest_lap_source) {
                 const src = pilot.fastest_lap_source;
@@ -475,7 +480,7 @@ function build_results(leaderboard, display_type='by_race_time', meta={}, number
 
         if (['by_consecutives', 'heat', 'round', 'current'].includes(display_type)) {
             let lap = '&#8212;';
-            if (pilot.consecutives && pilot.consecutives != '0:00.000') {
+            if (pilot.consecutives_raw && pilot.consecutives_raw != 0) {
                 lap = `${pilot.consecutives_base}/${pilot.consecutives}`;
             }
             const el = $(`<td class="consecutive">${lap}</td>`);
@@ -735,7 +740,7 @@ function build_elimination_brackets(race_bracket_type, race_class_id, ddr_pilot_
 
 function get_method_descriptor(ddr_pilot_data, ddr_heat_data, ddr_class_data, method, seed, rank, pilot_id) {
     if (method == 0) { // pilot
-        var pilot =  ddr_pilot_data?.find(obj => {return obj.pilot_id == pilot_id});
+        var pilot = ddr_pilot_data?.find(obj => {return obj.pilot_id == pilot_id});
 
         if (pilot) {
             return pilot.callsign;
@@ -761,3 +766,12 @@ function get_method_descriptor(ddr_pilot_data, ddr_heat_data, ddr_class_data, me
     }
     return false;
 }
+
+
+
+/* utility functions */
+function setsAreEqual(set1, set2) {
+    if (set1.size !== set2.size) return false;
+    return [...set1].every(item => set2.has(item));
+}
+
