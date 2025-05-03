@@ -26,7 +26,7 @@ To setup country flags, pilot avatars and team logos refer to the **Important In
 ## Important Information
 
 ### Pilot Avatars
-Pilot avatars are obtained from the `/server/static/user/avatars/` folder. The file name should be the pilot's callsign in lowercase where spaces has been replaced for underscores (_) and in the ~~.png~~ .webp file type. The file should be ~~a square image, preferably 256x256 or 512x612 pixels~~ 595x814 pixels. If no avatar is found, it will show the default avatar.
+Pilot avatars are obtained from the `/rh-data/shared/user/avatars/` folder. The file name should be the pilot's callsign in lowercase where spaces has been replaced for underscores (_) and in the ~~.png~~ .webp file type. The file should be ~~a square image, preferably 256x256 or 512x612 pixels~~ 595x814 pixels. If no avatar is found, it will show the default avatar.
 
 ### Country Flags
 A country can be set as pilot attribute in the pilots tab (dropdown). When set it shows the flag icon before the pilot's callsign.

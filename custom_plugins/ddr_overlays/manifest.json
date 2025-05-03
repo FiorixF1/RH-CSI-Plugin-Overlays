@@ -1,0 +1,14 @@
+{
+    "domain": "csi_overlays",
+    "name": "CSI Overlays",
+    "author": "FiorixF1",
+    "author_uri": "https://github.com/FiorixF1",
+    "description": "Customized overlays for CSI Drone Racing events",
+    "documentation_uri": "https://github.com/FiorixF1/RH-CSI-Plugin-Overlays/",
+    "license": "GPL-3.0",
+    "license_uri": "https://github.com/FiorixF1/RH-CSI-Plugin-Overlays/blob/main/LICENSE",
+    "version": "1.0.0",
+    "required_rhapi_version": "1.2",
+    "category": ["Streaming & Overlays"],
+    "zip_filename": "csi_overlays.zip"
+}

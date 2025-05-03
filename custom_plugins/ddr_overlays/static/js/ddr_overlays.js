@@ -536,7 +536,7 @@ function getPilotFlag(pilot_id, ddr_pilot_data) {
 }
 
 function getPilotImgURL(pilot) {
-    let pilotImg = '/static/user/avatars/' + pilot.callsign.replace(/ /g,"_").toLowerCase() + '.webp';
+    let pilotImg = '/shared/avatars/' + pilot.callsign.replace(/ /g,"_").toLowerCase() + '.webp';
     if (!imageExists(pilotImg)) {
         pilotImg = '/ddr_overlays/static/imgs/no_avatar.png';
     }
