@@ -192,6 +192,29 @@ function build_nextup(leaderboard, display_type, meta, ddr_pilot_data, show_posi
 
         $('#nextup_pilot_box').append(html);
     }
+
+    // dirty solution to handle heats with less than 4 pilots
+    for (var x = leaderboard.length; x < 4; ++x) {
+        let pilot_name = "-";       
+        let flagImg = '/ddr_overlays/static/imgs/flags/it.png';
+        let pilotImg = '/ddr_overlays/static/imgs/no_avatar.png';
+        let teamImg = '/ddr_overlays/static/imgs/no_team.png';
+
+        let html = '<div class="nextup_pilot">';
+        if (show_position) {
+            let position_strings = ["1st", "2nd", "3rd", "4th"];
+            html += '<div class="nextup_pilot_position">'+ position_strings[x-1] +'</div>';
+            $('#nextup_pilot_box').height(480);  // give more space to show positions (overriding CSS)
+            // that's the place where you can add other info such as fastest lap:
+            // var fastest_lap = leaderboard[i].fastest_lap;
+            // var consecutives = leaderboard[i].consecutives;
+        }
+        html += '<div class="container-figurina"> <img src="' + pilotImg + '" alt="Avatar"></div>';
+        html += '<div class="bottom-container"><div class="nextup_flag"><img src="' + flagImg + '"></div><div class="center-pilot-card"><div class="nextup_pilot_title">' + pilot_name + '</div><div class="container-team">' + ('-') + '</div></div><div class="team-logo"><img src="' + teamImg + '"></div></div>';
+        html += '</div>';
+
+        $('#nextup_pilot_box').append(html);
+    }
 }
 
 function build_leaderboard(leaderboard, display_type, meta, number_of_pilots=999, ddr_pilot_data=[], display_starts=false) {
