@@ -186,13 +186,13 @@ body {
                 // update order according to new positions
                 const the_leaderboard = $(".lbh-pilot-container-center");
 
-                const $drivers = the_leaderboard.children(".lbh-driver-wrapper").sort((a, b) => {
+                const pilots = the_leaderboard.children(".lbh-driver-wrapper").sort((a, b) => {
                     const posA = parseInt($(a).find(".lbh-position").text(), 10);
                     const posB = parseInt($(b).find(".lbh-position").text(), 10);
                     return posA - posB;
                 });
 
-                the_leaderboard.append($drivers);
+                the_leaderboard.append(pilots);
             }
             
             $('#team_leaderboard').empty();

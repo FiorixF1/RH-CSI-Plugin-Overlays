@@ -624,7 +624,7 @@ function generate_pilot_attributes(rotorhazard) {
 class BracketHeat {
     constructor(number, type, column, advance_to) {
         this.number = number;          /* heat number, starting from 1 */
-        this.type = type;              /* 'winner' or 'loser' */
+        this.type = type;              /* possible values: 'preliminary' | 'winner' | 'loser' */
         this.column = column;          /* column index where the heat shall be rendered, starting from 0 */
         this.advance_to = advance_to;  /* the next heat where the winners of this heat will race
                                         * applicable only if the first and the second classified advance to the same heat */
@@ -687,14 +687,13 @@ const bracket_formats = {
     //"fai64de":   []
 }
 
+// utility function to compare HTML blocks independently of indentation or trailing spaces
+function normalizeHtml(html) {
+    return $('<div>').append($.parseHTML($.trim(html))).html().trim();
+}
+
 function build_elimination_brackets(race_bracket_type, race_class_id, ddr_pilot_data, ddr_heat_data, ddr_class_data, ddr_race_data) {
-
-    // clear brackets
-    $('#winner_bracket_content').html('');
-    $('#loser_bracket_content').html('');
-
     var elimination_heats = [];
-
     Object.values(ddr_heat_data).forEach(heat => {
         if (heat.class_id == race_class_id) {
             elimination_heats.push(heat);
@@ -706,7 +705,7 @@ function build_elimination_brackets(race_bracket_type, race_class_id, ddr_pilot_
 
     for (let i = 0; i < elimination_heats.length; i++) {
         const heat = elimination_heats[i];
-        let html = '<div class="bracket_race">';
+        let html = '<div id="bracket_race_' + i + '" class="bracket_race">';
         html += '<div class="bracket_race_title">' + heat.displayname + '</div>';
         html += '<div class="bracket_race_pilots">';
 
@@ -755,17 +754,43 @@ function build_elimination_brackets(race_bracket_type, race_class_id, ddr_pilot_
             let bracket_heat_info = bracket_formats[race_bracket_type][i];
 
             if (bracket_heat_info.type == "winner" || bracket_heat_info.type == "preliminary") {
-                var column_counter = bracket_heat_info.column; 
+                // winner and preliminary bracket
+                var column_counter = bracket_heat_info.column;
+
+                // if the column has not been drawn yet, draw it
                 if ($('#bracket_column_' + column_counter).length == 0) {
-                    $('#winner_bracket_content').append('<div id="bracket_column_'+column_counter+'" class="bracket_column"></div>');
+                    $('#winner_bracket_content').append('<div id="bracket_column_' + column_counter + '" class="bracket_column"></div>');
                 }
-                $('#bracket_column_'+column_counter).append( html );
+
+                // bracket race handler
+                let this_bracket_race = $('#bracket_race_'+i);
+                if (this_bracket_race.length == 0) {
+                    // if the bracket race has not been drawn yet, draw it
+                    $('#bracket_column_'+column_counter).append( html );
+                } else {
+                    // if the bracket race already exists, redraw it only if it has changed
+                    if (normalizeHtml(html) != normalizeHtml(this_bracket_race.prop("outerHTML"))) {
+                        console.log(heat.displayname + " updated");
+                        this_bracket_race.replaceWith(html);
+                    }
+                }
             } else {
+                // loser bracket (same logic, different names)
                 var column_counter = bracket_heat_info.column + 1;
+
                 if ($('#bracket_column_loser_' + column_counter).length == 0) {
-                    $('#loser_bracket_content').append('<div id="bracket_column_loser_'+column_counter+'" class="bracket_column"></div>');
+                    $('#loser_bracket_content').append('<div id="bracket_column_loser_' + column_counter + '" class="bracket_column"></div>');
                 }
-                $('#bracket_column_loser_'+column_counter).append( html );
+
+                let this_bracket_race = $('#bracket_race_'+i);
+                if (this_bracket_race.length == 0) {
+                    $('#bracket_column_loser_'+column_counter).append( html );
+                } else {
+                    if (normalizeHtml(html) != normalizeHtml(this_bracket_race.prop("outerHTML"))) {
+                        console.log(heat.displayname + " updated");
+                        this_bracket_race.replaceWith(html);
+                    }
+                }
             }
         }
     }
