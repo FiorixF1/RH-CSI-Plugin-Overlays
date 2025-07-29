@@ -26,7 +26,7 @@ To setup country flags, pilot avatars and team logos refer to the **Important In
 ## Important Information
 
 ### Pilot Avatars
-Pilot avatars are obtained from the `/rh-data/shared/user/avatars/` folder. The file name should be the pilot's callsign in lowercase where spaces has been replaced for underscores (_) and in the ~~.png~~ .webp file type. The file should be ~~a square image, preferably 256x256 or 512x612 pixels~~ 595x814 pixels. If no avatar is found, it will show the default avatar.
+Pilot avatars are obtained from the `/rh-data/shared/avatars/` folder. The file name should be the pilot's callsign in lowercase where spaces has been replaced for underscores (_) and in the ~~.png~~ .webp file type. The file should be ~~a square image, preferably 256x256 or 512x612 pixels~~ 595x814 pixels. If no avatar is found, it will show the default avatar.
 
 ### Country Flags
 A country can be set as pilot attribute in the pilots tab (dropdown). When set it shows the flag icon before the pilot's callsign.
@@ -39,7 +39,11 @@ Teams are stored in the text file `/static/data/teams.txt` and can be set as pil
 Team logos are obtained from the `/static/imgs/teams/` folder. The file name should be the team's name in lowercase where spaces have been replaced for underscores (_) and in the .png file type. If no team is found, it will show the default logo.
 
 ### Brackets
-For now supported brackets are 32 double-elimination (FAI, 4-up, 32-pilot) and 16 double-elimination (MultiGP, 4-up, 16-pilot). Others will follow.
+These are the supported brackets, other will follow:
+- 16 double-elimination (MultiGP, 4-up, 16-pilot)
+- 16 double-elimination (FAI, 4-up, 16-pilot)
+- 32 double-elimination (FAI, 4-up, 32-pilot)
+- 8 double-elimination DDR
 
 The advice is to load the whole page as 1 source in OBS and then make 2 scenes, one for the Winner Bracket and one for the Lower Bracket and crop the source accordingly. This way you can easily switch between the two.
 
