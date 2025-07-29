@@ -624,7 +624,7 @@ function generate_pilot_attributes(rotorhazard) {
 class BracketHeat {
     constructor(number, type, column, advance_to) {
         this.number = number;          /* heat number, starting from 1 */
-        this.type = type;              /* 'winner' or 'loser' */
+        this.type = type;              /* possible values: 'preliminary' | 'winner' | 'loser' */
         this.column = column;          /* column index where the heat shall be rendered, starting from 0 */
         this.advance_to = advance_to;  /* the next heat where the winners of this heat will race
                                         * applicable only if the first and the second classified advance to the same heat */
@@ -632,6 +632,14 @@ class BracketHeat {
 }
 
 const bracket_formats = {
+    "ddr8de":    [
+                   new BracketHeat(1,  "preliminary", 0, 4),
+                   new BracketHeat(2,  "preliminary", 0, 4),
+                   new BracketHeat(3,  "loser",       0, 5),
+                   new BracketHeat(4,  "winner",      1, 6),
+                   new BracketHeat(5,  "loser",       1, 6),
+                   new BracketHeat(6,  "winner",      2),
+                 ],
     "multigp16": [
                    new BracketHeat(1,  "preliminary", 0, 6),
                    new BracketHeat(2,  "preliminary", 0, 6),
@@ -649,7 +657,22 @@ const bracket_formats = {
                    new BracketHeat(14, "winner",      3),
                  ],
     //"fai16":     [],
-    //"fai16de":   [],
+    "fai16de":   [
+                   new BracketHeat(1,  "preliminary", 0),
+                   new BracketHeat(2,  "preliminary", 0),
+                   new BracketHeat(3,  "preliminary", 0),
+                   new BracketHeat(4,  "preliminary", 0),
+                   new BracketHeat(5,  "loser",       0),
+                   new BracketHeat(6,  "loser",       0),
+                   new BracketHeat(7,  "winner",      1),
+                   new BracketHeat(8,  "winner",      1),
+                   new BracketHeat(9,  "loser",       1),
+                   new BracketHeat(10, "loser",       1),
+                   new BracketHeat(11, "loser",       2),
+                   new BracketHeat(12, "winner",      2),
+                   new BracketHeat(13, "loser",       3),
+                   new BracketHeat(14, "winner",      3),
+                 ],
     //"fai32":     [],
     "fai32de":   [
                    new BracketHeat(1,  "preliminary", 0),

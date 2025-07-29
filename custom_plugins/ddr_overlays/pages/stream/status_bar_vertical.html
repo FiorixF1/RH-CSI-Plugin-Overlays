@@ -227,13 +227,13 @@ body {
                 // update order according to new positions
                 const the_leaderboard = $("#the_leaderboard");
 
-                const $drivers = the_leaderboard.children(".driver").sort((a, b) => {
+                const pilots = the_leaderboard.children(".driver").sort((a, b) => {
                     const posA = parseInt($(a).find(".position").text(), 10);
                     const posB = parseInt($(b).find(".position").text(), 10);
                     return posA - posB;
                 });
 
-                the_leaderboard.append($drivers);
+                the_leaderboard.append(pilots);
             }
             
             $('#team_leaderboard').empty();

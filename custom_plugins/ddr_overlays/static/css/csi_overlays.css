@@ -32,6 +32,7 @@
     background-position: center;
     background-size: contain;
     display: flex;
+    width: 326px;
     min-height: 77px;
     margin-top:-21px;
     position: relative;
